@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Phân tích chính xác hơn
+          fetch-depth: 0  # Đảm bảo clone đầy đủ để phân tích chính xác
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -38,10 +38,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and analyze with SonarCloud
-        env: 
+        env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -f project/pom.xml -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=haivoDA22TTD_API_CRUD \
             -Dsonar.organization=haivoda22ttd \
             -Dsonar.host.url=https://sonarcloud.io
