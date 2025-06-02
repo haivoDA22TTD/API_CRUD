@@ -1,0 +1,41 @@
+name: CI with SonarCloud
+
+on:
+  push:
+    branches:
+      - main
+      - CI/CD
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          organization: mycompany         
+          projectKey: api_crud       
+          token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Build and run tests with Maven and 'test' profile
+        run: mvn -f project/pom.xml clean install -Dspring.profiles.active=test
